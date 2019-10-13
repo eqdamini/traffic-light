@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<title>Two way Stop Light as Behavioral Tree, one child then other: traffic_light_bt</title>
+<style>
+
+#containerLight1 {
+  width: 50px;
+  height: 150px;
+  position: relative;
+  background: black;
+}
+#containerLight2 {
+  width: 50px;
+  height: 150px;
+  position: relative;
+  background: black;
+}
+#containerLight3 {
+  width: 50px;
+  height: 150px;
+  position: relative;
+  background: black;
+}
+#containerLight4 {
+  width: 50px;
+  height: 150px;
+  position: relative;
+  background: black;
+}
+
+#containerLight5 {
+  width: 50px;
+  height: 100px;
+  position: relative;
+  background: black;
+}
+
+#containerLight6 {
+  width: 50px;
+  height: 100px;
+  position: relative;
+  background: black;
+}
+
+#stopLightRed1{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: red;
+}
+#stopLightRed2{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: red;
+}
+#leftTurnRed1 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: red;
+}
+#leftTurnRed2 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: red;
+}
+
+#crossLightOrange1 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: orangered;
+}
+
+#crossLightOrange2 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: orangered;
+}
+
+#stopLightYellow1{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+#stopLightYellow2{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+#leftTurnYellow1 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+#leftTurnYellow2 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+
+#stopLightGreen1{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+#stopLightGreen2{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+#leftTurnGreen1{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+#leftTurnGreen2{
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+
+#crossLightWhite1 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+
+#crossLightWhite2 {
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: black;
+}
+
+
+</style>
+<body>
+
+<p>
+<button onclick="myStep()">Step animation</button>
+</p>
+
+<p>
+<button onclick= "nsLeftTurn()">North-South Left Turn</button>
+</p>
+
+<p>
+<button onclick= "ewLeftTurn()">East-West Left Turn</button>
+</p>
+
+<p>
+<button onclick="nsCrossPlease()">Cross North-South</button>
+</p>
+
+<p>
+<button onclick="ewCrossPlease()">Cross East-West</button>
+</p>
+
+<br>
+
+<p>
+<h1>North-South traffic</h1>
+<div id ="containerLight1">
+<div id ="stopLightRed1"></div>
+<div id ="stopLightYellow1"></div>
+<div id ="stopLightGreen1"></div>
+</div>
+
+<h1>East-West traffic</h1>
+<div id ="containerLight2">
+<div id ="stopLightRed2"></div>
+<div id ="stopLightYellow2"></div>
+<div id ="stopLightGreen2"></div>
+</div>
+
+<h1>North-South left turn traffic</h1>
+<div id="containerLight3">
+<div id="leftTurnRed1"></div>
+<div id ="leftTurnYellow1"></div>
+<div id ="leftTurnGreen1"></div>
+</div>
+
+<h1>East-West left turn traffic</h1>
+<div id="containerLight4">
+<div id="leftTurnRed2"></div>
+<div id ="leftTurnYellow2"></div>
+<div id ="leftTurnGreen2"></div>
+</div>
+
+<h1>North-South Cross light</h1>
+<div id="containerLight5">
+<div id="crossLightOrange1"></div>
+<div id ="crossLightWhite1"></div>
+</div>
+
+<h1>East-West Cross light</h1>
+<div id="containerLight6">
+<div id="crossLightOrange2"></div>
+<div id ="crossLightWhite2"></div>
+</div>
+
+
+<script>
+//no changes from FSM needed above this line, but colors set initially to
+//red-red for clarity versus red-green
+
+var ns = 0;
+var ew = 0;
+var nsCross = 0;
+var ewCross = 0;
+
+//constructor
+function SeqLight(RedLight, YellowLight, GreenLight){
+  function changeLight(elementB, elementN, colorN) {
+    elementN.style.backgroundColor = colorN;
+    elementB.style.backgroundColor="black";
+  }
+  var intr = 0; //keeps track of the case
+  var runMe = false; //keeps track of which light to run
+
+  this.RedLight = RedLight;
+  this.YellowLight = YellowLight;
+  this.GreenLight = GreenLight;
+
+  //switches the light color
+  this.switchColor = function() {
+     switch(intr) {
+       //light green
+         case 0: changeLight(this.RedLight,this.GreenLight, "green");
+           break;
+       //light Yellow,
+         case 1: changeLight(this.GreenLight,this.YellowLight, "yellow");
+           break;
+       //light red
+         case 2: changeLight(this.YellowLight,this.RedLight, "red");
+           intr = 0;
+           this.runMe = false; // change
+           return false;
+           break;
+      }
+         intr++;
+         return true;
+  }
+
+  //returns the value of intr
+  this.getIntr = function() {
+    return intr;
+  }
+}
+
+function CrossLight(OrangeLight, WhiteLight){
+  function changeLight(elementB, elementN, colorN) {
+    elementN.style.backgroundColor = colorN;
+    elementB.style.backgroundColor="black";
+  }
+  var intr = 0;
+  var runMe = false;
+  this.OrangeLight = OrangeLight;
+  this.WhiteLight = WhiteLight;
+  this.switchColor = function() {
+     switch(intr) {
+       //light green
+         case 0: changeLight(this.OrangeLight,this.WhiteLight, "white");
+           break;
+       //light red
+         case 1: changeLight(this.WhiteLight,this.OrangeLight, "orangered");
+           intr = 0;
+           this.runMe = false;
+           return false;
+           break;
+      }
+         intr++;
+         return true;
+  }
+}
+
+//instantiates the traffic lights
+var SeqLight1 = new SeqLight(
+  document.getElementById("stopLightRed1"),
+  document.getElementById("stopLightYellow1"),
+  document.getElementById("stopLightGreen1"));
+
+var SeqLight2 = new SeqLight(
+  document.getElementById("stopLightRed2"),
+  document.getElementById("stopLightYellow2"),
+  document.getElementById("stopLightGreen2"));
+
+var LeftLight1 = new SeqLight(
+  document.getElementById("leftTurnRed1"),
+  document.getElementById("leftTurnYellow1"),
+  document.getElementById("leftTurnGreen1"));
+
+var LeftLight2 = new SeqLight(
+  document.getElementById("leftTurnRed2"),
+  document.getElementById("leftTurnYellow2"),
+  document.getElementById("leftTurnGreen2"));
+
+var CrossLight1 = new CrossLight(
+  document.getElementById("crossLightOrange1"),
+  document.getElementById("crossLightWhite1"));
+
+var CrossLight2 = new CrossLight(
+  document.getElementById("crossLightOrange2"),
+  document.getElementById("crossLightWhite2"));
+
+SeqLight1.runMe = true;
+
+var debug = true; //set to true to show red-red step in light sequence
+
+function nsLeftTurn() {
+  ns = 1;
+}
+
+function ewLeftTurn() {
+  ew = 1;
+}
+
+function nsCrossPlease() {
+  nsCross = 1;
+}
+
+function ewCrossPlease() {
+  ewCross = 1;
+}
+
+function myStep() {
+    if (SeqLight1.runMe)
+      {
+        if (ns == 1 && SeqLight1.getIntr() == 0) {
+          LeftLight1.runMe = true;
+        }
+        if (LeftLight1.runMe) {
+          LeftLight1.switchColor();
+          if (SeqLight1.getIntr() == 2) {
+            LeftLight1.runMe = false;
+            ns = 0;
+          }
+        }
+
+        if (nsCross == 1 && SeqLight1.getIntr() == 0) {
+          CrossLight1.runMe = true;
+        }
+        if (CrossLight1.runMe && (SeqLight1.getIntr() == 0 || SeqLight1.getIntr() == 2)) {
+          CrossLight1.switchColor();
+          if (SeqLight1.getIntr() == 2) {
+            nsCross = 0;
+          }
+        }
+
+        if (!SeqLight1.switchColor())
+          SeqLight2.runMe = true;
+          if (debug) {return;}
+      }
+    if (SeqLight2.runMe)
+     {
+       if (ew == 1 && SeqLight2.getIntr() == 0) {
+         LeftLight2.runMe = true;
+       }
+       if (LeftLight2.runMe) {
+         LeftLight2.switchColor();
+         if (SeqLight2.getIntr() == 2) {
+           LeftLight2.runMe = false;
+           ew = 0;
+         }
+       }
+
+        if (ewCross == 1 && SeqLight2.getIntr() == 0) {
+          CrossLight2.runMe = true;
+        }
+        if (CrossLight2.runMe && (SeqLight2.getIntr() == 0 || SeqLight2.getIntr() == 2)) {
+          CrossLight2.switchColor();
+          if (SeqLight2.getIntr() == 2) {
+            ewCross = 0;
+          }
+        }
+
+        if (!SeqLight2.switchColor())
+          SeqLight1.runMe = true;
+          if (debug) {return;}
+     }
+ }
+
+</script>
+
+</body>
